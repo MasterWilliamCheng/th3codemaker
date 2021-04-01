@@ -2,7 +2,7 @@
 
 synchronized是java提供用于处理线程原子性操作相关问题的内置锁。对于每个对象来说，都有一个monitor，你可以把它看做是一个同步工具，synchronized需要通过操作monitor来实现锁的获取和释放。
 
-当synchronized作用于**对象**的时候，反编译可以看到2个指令，monitorenter和monitorexit
+当synchronized作用于**代码块**的时候，反编译可以看到2个指令，monitorenter和monitorexit
 ![image](https://user-images.githubusercontent.com/31581862/112711297-4aa58480-8f02-11eb-9878-7998c08240a2.png)
 
 
