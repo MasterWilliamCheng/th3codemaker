@@ -1,4 +1,4 @@
-在[Mysql-索引数据结构&引擎篇](https://github.com/MasterWilliamCheng/codeman/blob/main/mysql/Mysql-%E7%B4%A2%E5%BC%95%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%26%E5%BC%95%E6%93%8E%E7%AF%87.md)我们知道了聚集索引和非聚集索引的区别，在mysql中，还有一些其他类型索引的概念
+在[Mysql-索引数据结构&引擎篇](https://github.com/MasterWilliamCheng/codeman/blob/main/mysql/Mysql-%E7%B4%A2%E5%BC%95%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%26%E5%BC%95%E6%93%8E%E7%AF%87.md)我们知道了聚集索引和非聚集索引的区别，在mysql中，还有一些其他类型索引的概念：
 
 **联合索引（多列索引）**：使用多列字段组合创建索引，联合索引查询比设置多个单列索引效率高
 > **联合索引如何查询**：按顺序先比较第一个联合的字段大小，相同就继续比较下一个
