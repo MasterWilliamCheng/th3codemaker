@@ -1,6 +1,6 @@
-最近在研究mysql中事务和锁方面的问题，总结了一些点，方便温故知新
+前面探究了mysql的数据结构和索引，本文我们来学习一下mysql中事务和锁方面的知识。总结了一些点，方便温故知新
 
-### **事务**
+#### **事务**
 **1. ACID四大特性**
 
 **Atomicity：原子性**
@@ -29,7 +29,7 @@
 **可串行化（SERIALIZABLE）**
 事务串行执行，不能并发执行，可以解决幻读（一个事务进行2次查询，中间有别的事务进行了新增或删除操作，导致得到了不同条数的数据）
 
-### **锁**
+#### **锁**
 **共享锁（读锁）**  
 允许多个事务共享一把锁，但是对于加锁的数据只能读取，不能进行UPDATE DETELE等操作
 lock in share mode可以添加共享锁
@@ -43,7 +43,7 @@ select ... for update也会添加排他锁
 **意向共享锁/意向排他锁**
 在事务获取共享锁或排他锁之前，会对整张表先加锁，意向锁存在的意义是支持行锁和表锁共存
 
-### **锁算法**
+#### **锁算法**
 **Record Lock（记录锁）**
 对记录上的索引加锁，可以理解为行锁
 
@@ -53,4 +53,34 @@ select ... for update也会添加排他锁
 **Next-Key Lock（临键锁）**
 Record Lock+Gap Lock，不仅对索引加锁，也对索引的间隙加锁（左开右闭），InnoDB利用Next-Key Lock来解决幻读问题
 
-（未完待续）
+#### 加锁规则
+**1. next-key lock 是前开后闭区间((x,y])。**
+
+**2. 查找过程中访问到的对象才会加锁。**
+
+**3. 索引上的等值查询，给唯一索引加锁的时候，next-key lock 退化为行锁。**
+
+**4. 索引上的等值查询，向右遍历时且最后一个值不满足等值条件的时候，next-key lock 退化为间隙锁。**
+
+**5. 唯一索引上的范围查询会访问到不满足条件的第一个值为止**
+
+举例：
+假设我们有张只有主键id的表，表的数据为1,2,3,4,5,6,9,11，我们看看不同的sql下，加锁的结果是什么
+
+> select * from user where id =8 for update
+8介于索引6 9之间，next-key lock前开后闭(6,9]，又因为右边最后一个值9不等于8，所以next-key lock退化成间隙锁(6,9) 
+
+> select * from user where id =9 for update
+ 因为是唯一索引等值查询，退化成行锁
+
+> select * from user where id >6
+ 根据第五条规则，next-key lock范围(6,+MAXVALUE]
+
+> select * from user where id >=6
+因为6是等值查询，所以需要加行锁，next-key lock范围[6,MAXVALUE] 
+
+> select * from user where id >7
+介于6之前，所以next-key lock范围(6,MAXVALUE]
+
+> select * from user where id >6 and id <8
+因为规则5，第一个不满足查询条件的是9，所以next-key lock范围(6,9]   
