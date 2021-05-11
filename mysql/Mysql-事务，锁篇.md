@@ -85,6 +85,14 @@ Record Lock+Gap Lock，不仅对索引加锁，也对索引的间隙加锁（左
 > select * from user where id >6 and id <8 for update
 因为规则5，第一个不满足查询条件的是9，所以next-key lock范围(6,9]   
 
+> update user set name = xx where id =8 
+next-key lock范围(6,9] 
+
+> update user set name = xx where id =6
+next-key lock范围(5,6] + (6,9)
+
+> update user set name = xx where id >6
+next-key lock范围(6,MAXVALUE]  
 
 
 ----------
