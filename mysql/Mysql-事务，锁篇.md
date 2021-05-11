@@ -73,14 +73,40 @@ Record Lock+Gap Lock，不仅对索引加锁，也对索引的间隙加锁（左
 > select * from user where id =9 for update
  因为是唯一索引等值查询，退化成行锁
 
-> select * from user where id >6
+> select * from user where id >6 for update
  根据第五条规则，next-key lock范围(6,+MAXVALUE]
 
-> select * from user where id >=6
+> select * from user where id >=6 for update
 因为6是等值查询，所以需要加行锁，next-key lock范围[6,MAXVALUE] 
 
-> select * from user where id >7
+> select * from user where id >7 for update
 介于6之前，所以next-key lock范围(6,MAXVALUE]
 
-> select * from user where id >6 and id <8
+> select * from user where id >6 and id <8 for update
 因为规则5，第一个不满足查询条件的是9，所以next-key lock范围(6,9]   
+
+
+
+----------
+
+
+#### 2021/5/11 更新
+
+参考自[【美团技术团队】Innodb中的事务隔离级别和锁的关系](https://tech.meituan.com/2014/08/20/innodb-lock.html)
+
+对于读取历史数据的方式，我们叫它快照读 (snapshot read)，而读取数据库当前版本数据的方式，叫当前读 (current read)。
+很显然，在MVCC中：
+
+**快照读**：就是select
+
+select * from table ….;
+
+**当前读**：特殊的读操作，插入/更新/删除操作，属于当前读，处理的都是当前的数据，需要加锁。
+
+select * from table where ? lock in share mode;
+select * from table where ? for update;
+insert;
+update ;
+delete;
+
+**MVCC是解决快照读的幻读问题，间隙锁是解决当前读的幻读问题。他们解决不同情况下的幻读问题**
