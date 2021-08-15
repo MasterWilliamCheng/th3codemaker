@@ -1,8 +1,9 @@
 ### **spring ioc流程**
 
 ###### **BeanFactory对象的创建和增强，完成bean配置信息的加载和解析**
-1. 通过xml，注解等方式定义bean信息，由BeanDefinitionReader接口解析生成BeanDefinition，存于BeanDefinitionMap中，这是属于创建BeanFactory的一部分
-2. 通过BeanFactoryPostProcessor后置处理器接口对BeanFactory增强处理，其中常用的实现类包括ConfigurationClassPostProcessor（注解），PlaceholderConfigurerSupport（占位符）等
+1. 创建Beanfactory容器
+2. 通过xml，注解等方式定义bean信息，由BeanDefinitionReader接口解析生成BeanDefinition，存于BeanDefinitionMap中，这是属于BeanFactory的一部分
+3. 通过BeanFactoryPostProcessor后置处理器接口对BeanFactory增强处理，其中常用的实现类包括ConfigurationClassPostProcessor（注解），PlaceholderConfigurerSupport（占位符）等
 
 ###### **Bean的实例化，初始化过程**
 1. 注册BeanPostProcessor后置处理器(registerBeanPostProcessors（beanFactory）)
