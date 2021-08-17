@@ -10,7 +10,7 @@
 2. 初始化信息源，国际化处理(initMessageSource())
 3. 初始化多播器(initApplicationEventMulticaster())
 4. 注册监听器(registerListeners())
-5. 实例化并初始化bean对象
+5. 实例化并初始化bean对象(finishBeanFactoryInitialization())
 >
 >这一步才是真正开始创建bean，其中包括通过反射实例化对象，填充属性populateBean()，执行Aware接口方法（invokeAwareMethods()获取容器内置属性），执行实例化前置方法(processor.postProcessBeforeInitialization)，执行自定义init方法(invokeInitMethods())，执行实例化后置方法(processor.postProcessAfterInitialization)等过程
 
