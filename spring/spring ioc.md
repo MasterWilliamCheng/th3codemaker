@@ -6,7 +6,7 @@
 3. 通过BeanFactoryPostProcessor后置处理器接口对BeanFactory增强处理，其中常用的实现类包括ConfigurationClassPostProcessor（注解），PlaceholderConfigurerSupport（占位符）等
 
 ###### **Bean的实例化，初始化过程**
-1. 注册BeanPostProcessor后置处理器(registerBeanPostProcessors（beanFactory）)
+1. 注册BeanPostProcessor后置处理器(registerBeanPostProcessors（beanFactory）)，常用的实现类有ApplicationContextPostProcessor（设置ApplicationContext，Environment等）等
 2. 初始化信息源，国际化处理(initMessageSource())
 3. 初始化多播器(initApplicationEventMulticaster())
 4. 注册监听器(registerListeners())
