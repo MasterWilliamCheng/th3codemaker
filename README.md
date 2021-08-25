@@ -39,6 +39,13 @@
 
 ----------
 
+## 消息中间件 
+
+- [Kafka的一些定义及实现](https://github.com/MasterWilliamCheng/th3codemaker/blob/main/%E6%B6%88%E6%81%AF%E4%B8%AD%E9%97%B4%E4%BB%B6/Kafka%E7%9A%84%E4%B8%80%E4%BA%9B%E5%AE%9A%E4%B9%89%E5%8F%8A%E5%AE%9E%E7%8E%B0.md)
+
+
+----------
+
 ## 数据结构
 - [二叉树、平衡二叉树、红黑树、B-tree、B+tree、Hash表](https://github.com/MasterWilliamCheng/codeman/blob/main/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%87%A0%E7%A7%8D%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.md)
 
