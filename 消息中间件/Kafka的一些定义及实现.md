@@ -16,7 +16,7 @@
 
 ### broker及leader选举机制
 **broker leader选举**\
-在kafka集群中，会有多个broker节点，第一个在zk上成功创建临时节点/controller的就是leader broke，其余的follower broker则会通过controller path在zk上注册watch，当leader broker退出时，所有的follower broker都通过watch感知到，它们会去竞争创建新的/controller。zk会保证只有一个broker成功创建临时节点，其他的broker会收到异常通知，只能去注册新的watch。\
+在kafka集群中，会有多个broker节点，第一个在zk上成功创建临时节点/controller的就是控制器，其余的broker则会通过controller path在zk上注册watch，当控制器broker退出时，所有的broker节点都通过watch感知到，它们会去竞争创建新的/controller。zk会保证只有一个broker成功创建临时节点，其他的broker会收到异常通知，只能去注册新的watch。\
 个人感觉这是一种类似分布式锁+监听器的模式。
 
 **分区leader副本选举**\
