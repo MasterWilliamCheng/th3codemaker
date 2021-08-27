@@ -122,6 +122,8 @@ public class ArrayList<E> {
             elementData = (size == 0)
                     ? EMPTY_ELEMENTDATA
                     : Arrays.copyOf(elementData, size);
+        //顺便提一下，Arrays.copyOf方法是创建一个大小为size的新数组，按照size和elementData.length中更小的单位复制elementData中的元素。
+        //当然，如果传入的size大于elementData.length话，也就相当于扩容，反之则是裁剪
         }
     }
 
@@ -135,17 +137,20 @@ public class ArrayList<E> {
 
     public void ensureCapacity(int minCapacity) {
         int minExpand = (elementData != DEFAULTCAPACITY_EMPTY_ELEMENTDATA)
-                // any size if not default element table
-                ? 0
-                // larger than default for default empty table. It's already
-                // supposed to be at default size.
-                : DEFAULT_CAPACITY;
+                // 这里要说明一下，只有在创建不指定大小的空实例时，扩容才会用到默认初始容量DEFAULT_CAPACITY
+                ? 0 : DEFAULT_CAPACITY;
 
         if (minCapacity > minExpand) {
             ensureExplicitCapacity(minCapacity);
         }
     }
 
+    /**
+     * 先判断数组缓冲区是不是没有添加过元素，如果是，则返回设置容量和默认初始容量的最大值
+     * @param elementData
+     * @param minCapacity
+     * @return
+     */
     private static int calculateCapacity(Object[] elementData, int minCapacity) {
         if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {
             return Math.max(DEFAULT_CAPACITY, minCapacity);
@@ -160,7 +165,7 @@ public class ArrayList<E> {
     private void ensureExplicitCapacity(int minCapacity) {
         modCount++;
 
-        // overflow-conscious code
+        // 如果要扩容的数组大小大于缓冲数组的大小，才可以执行扩容，否则不会扩容
         if (minCapacity - elementData.length > 0)
             grow(minCapacity);
     }
@@ -172,21 +177,24 @@ public class ArrayList<E> {
 
     /**
      * 扩容机制具体实现
-     * @param minCapacity the desired minimum capacity
      */
-
     private void grow(int minCapacity) {
-        // overflow-conscious code
         int oldCapacity = elementData.length;
+        // >> 1 意思是获取旧数组的一半长度，扩容相当于将数组长度扩展成原来的1.5倍
         int newCapacity = oldCapacity + (oldCapacity >> 1);
+        //如果还是小于最小容量，则直接把最小容量作为新容量
         if (newCapacity - minCapacity < 0)
             newCapacity = minCapacity;
         if (newCapacity - MAX_ARRAY_SIZE > 0)
             newCapacity = hugeCapacity(minCapacity);
-        // minCapacity is usually close to size, so this is a win:
+        // 按照新容量扩容
         elementData = Arrays.copyOf(elementData, newCapacity);
     }
 
+    /**
+     * 比较 minCapacity 和 MAX_ARRAY_SIZE，如果 minCapacity 大于最大容量，则新容量则为Integer.MAX_VALUE，
+     * 否则，新容量大小则为 MAX_ARRAY_SIZE 即为 Integer.MAX_VALUE - 8
+     */
     private static int hugeCapacity(int minCapacity) {
         if (minCapacity < 0) // overflow
             throw new OutOfMemoryError();
