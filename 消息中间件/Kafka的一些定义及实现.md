@@ -26,8 +26,12 @@
 **enable.auto.commit** 手动提交或者自动提交，自动提交是在调用 poll 方法时，提交上次 poll 处理过后的位移\
 **auto.commit.interval.ms** 自动提交间隔\
 **heartbeat.interval.ms** 心跳间隔\
-**session.timeout.ms** consumer过期时间，超过这个时间没有收到请求Coordinator就会认为consumer挂了\
+**session.timeout.ms consumer** 过期时间，超过这个时间没有收到心跳，Coordinator就会认为consumer挂了，触发rebalance\
 **max.poll.interval.ms** 两次poll的最大间隔时间
+
+**关于自动提交，要区分2种情况：**\
+（1）如果第一次poll完成后没有达到auto.commit.interval.ms设置的时间，此时不会提交offset，而是继续进行下一次poll，直到某一次poll的时候自动提交时间到了，这个时候才会一并提交之前消费的消息的offset。也就是说只有在经过auto.commit.interval.ms间隔后，并且在下一次调用poll时才会提交所有已消费消息的offset\
+（2）当一次poll间隔处理数据的时间过长，超过了max.poll.interval.ms，这个时候会发生重平衡rebalance，offset提交失败，consumer重新加入进group，造成**重复消费**
 
 ### kafka常用linux命令
 linux下启动zookeeper服务和kafka，就可以进行消息的生产与消费了
