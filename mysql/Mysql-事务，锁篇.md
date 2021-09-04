@@ -62,14 +62,14 @@ Record Lock+Gap Lock，不仅对索引加锁，也对索引的间隙加锁（左
 
 **2. 查找过程中访问到的对象才会加锁。**
 
-**3. 索引上的等值查询，给唯一索引加锁的时候，next-key lock 退化为行锁。**
+**3. 索引上的等值查询，给唯一索引加锁的时候，next-key lock 退化为行锁。（这里强调，只有唯一索引才会退化为行锁，如果是普通索引，仍然为间隙锁+行锁，也就是next-key lock）**
 
 **4. 索引上的等值查询，向右遍历时且最后一个值不满足等值条件的时候，next-key lock 退化为间隙锁。**
 
 **5. 唯一索引上的范围查询会访问到不满足条件的第一个值为止**
 
 举例：
-假设我们有张只有主键id的表，表的数据为1,2,3,4,5,6,9,11，我们看看不同的sql下，加锁的结果是什么
+假设我们有张只有主键id的表，表的id为1,2,3,4,5,6,9,11，普通索引字段a为1,2,3,4,5,6,9,11，我们看看不同的sql下，加锁的结果是什么
 
 > select * from user where id =8 for update
 8介于索引6 9之间，next-key lock前开后闭(6,9]，又因为右边最后一个值9不等于8，所以next-key lock退化成间隙锁(6,9) 
@@ -88,6 +88,12 @@ Record Lock+Gap Lock，不仅对索引加锁，也对索引的间隙加锁（左
 
 > select * from user where id >6 and id <8 for update
 因为规则5，第一个不满足查询条件的是9，所以next-key lock范围(6,9]   
+
+> select * from user where a =6 for update
+next-key lock范围(5,6]+(6,9)，因为不是唯一索引，所以间隙锁不会退化为行锁
+
+> select * from user where a =7 for update
+next-key lock范围(6,9)
 
 > update user set name = xx where id =8 
 next-key lock范围(6,9] 
