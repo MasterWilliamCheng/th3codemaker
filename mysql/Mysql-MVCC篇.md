@@ -14,7 +14,7 @@
 ### readview ###
 
 一个事务在进行查询时，会创建一个快照readview（**RC和RR不同，RR隔离级别会在事务第一次查询时生成一个快照，事务的后续查询都使用这个快照，RC级别则是事务每次查询都会生成快照**），它会存储系统中其他所有未提交活跃事务id的集合m_ids。\
-ps：begin/start transaction命令并不是⼀个事务的起点，在执⾏到它们之后的第⼀个操作InnoDB表的语句（第⼀个快照读语句），事务才真正启动。如果你想要⻢上启动⼀个事务，可以使⽤start transaction with consistent snapshot这个命令。
+ps：begin/start transaction命令并不是⼀个事务的起点，在执⾏到它们之后的第⼀个操作InnoDB表的语句（第⼀个快照读语句），事务才真正启动。如果你想要⻢上启动⼀个事务，可以使⽤start transaction with consistent snapshot这个命令。另外，更新数据都是先读后写的，⽽这个读，只能读当前的值，称为“当前读”（currentread）
 
 那么mysql是怎么利用上述的构件去实现MVCC呢？大概有以下四种情况：
 
