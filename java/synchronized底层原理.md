@@ -18,7 +18,8 @@ synchronized是java提供用于处理线程原子性操作相关问题的内置�
 2.获取到锁的线程调用wait方法，会立刻释放锁，并进入waitSet队列等待被唤醒，entryList内的线程开始获取锁（一般是head线程）\
 3.有线程调用notify方法的时候，waitSet内的某个线程会被唤醒（如果调用notifyAll会唤醒所有wait线程），此时如果entrylist是空的，线程会直接进入entryList，如果不为空，线程进入cxq，等待锁被释放加入entrylist\
 4.持有锁的线程释放锁之后，cxq中的线程全部按照原有的顺序进入entrylist\
-5.设置entryList的原因是，可以减少cxq上的并发访问，大大增加吞吐量。另外，进入entrylist的线程的位置不会发生变化，新创建的线程也要先进入cxq
+5.设置entryList的原因是，可以减少cxq上的并发访问，大大增加吞吐量。另外，进入entrylist的线程的位置不会发生变化，新创建的线程也要先进入cxq\
+6.waitset里是尾插法的队列，notify也是将head节点从waitset拿出来
 
 **monitor与对象关联**
 
