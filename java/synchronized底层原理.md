@@ -14,7 +14,7 @@ synchronized是java提供用于处理线程原子性操作相关问题的内置�
 
 **那么，monitor又是如何工作的呢**\
 进一步细化，对于monitor来说，有3个队列contentionList（cxq），entryList和waitSet\
-1.当有一个线程获取到锁之后，同时计数器+1，此时对于其他线程来说都是阻塞的，阻塞线程全部进入cxq（cxq是一个头插法插入的队列，cas新增节点），等待owner线程锁释放。\
+1.当有一个线程获取到锁之后，此时其他阻塞线程会全部进入cxq（已经在entrylist中的线程除外），（cxq是一个头插法插入的队列，cas新增节点），等待owner线程锁释放。\
 2.获取到锁的线程调用wait方法，会立刻释放monitor，并进入waitSet队列等待被唤醒，entryList内的线程开始获取锁（一般是head线程）\
 3.有线程调用notify方法的时候，waitSet内的某个线程会被唤醒（如果调用notifyAll会唤醒所有wait线程），此时如果entrylist是空的，线程会直接进入entryList，如果不为空，线程进入cxq，等待锁被释放加入entrylist\
 4.执行完同步代码的线程会退出owner区域，同时释放锁，cxq中的线程全部按照原有的顺序进入entrylist\
