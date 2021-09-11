@@ -12,12 +12,13 @@ synchronized是java提供用于处理线程原子性操作相关问题的内置�
 
 当线程执行到monitorenter指令时，会去尝试获取monitor，如果锁计数器为0，就会将计数器+1，其他线程就无法获取当前对象的monitor，没有获取到monitor的线程将会阻塞。如果再次重入monitor，计数器会继续+1。相反的，执行monitorexit指令时，会将计数器-1，直到计数器为0的时候，当前线程会释放monitor。
 
-**那么，monitor又是如何工作的呢**
-进一步细化，对于monitor来说，有2个队列entryList和waitSet，线程在请求获取monitor之前都会进入entryList
-1.当有一个线程获取到monitor之后会进入一个Owner区域，同时对计数器进行+1，此时对于entryList里的线程来说都是阻塞的，等待锁释放。
-2.进入Owner的线程调用wait方法，会释放monitor，同时计数器-1，并进入waitSet队列等待被唤醒，entryList内的线程开始新一轮的竞争
-3.有线程调用notify方法的时候，waitSet内的某个线程会被唤醒（当然，如果调用notifyAll会唤醒所有wait线程），线程会重新进入entryList，去继续下一轮竞争
-4.执行完同步代码的线程会退出区域，同时释放锁
+**那么，monitor又是如何工作的呢**\
+进一步细化，对于monitor来说，有3个队列contentionList（cxq），entryList和waitSet\
+1.当有一个线程获取到锁之后，同时计数器+1，此时对于其他线程来说都是阻塞的，阻塞线程全部进入cxq（cxq是一个头插法插入的队列，cas新增节点），等待owner线程锁释放。\
+2.获取到锁的线程调用wait方法，会立刻释放monitor，并进入waitSet队列等待被唤醒，entryList内的线程开始获取锁（一般是head线程）\
+3.有线程调用notify方法的时候，waitSet内的某个线程会被唤醒（如果调用notifyAll会唤醒所有wait线程），此时如果entrylist是空的，线程会直接进入entryList，如果不为空，线程进入cxq，等待锁被释放加入entrylist\
+4.执行完同步代码的线程会退出owner区域，同时释放锁，cxq中的线程全部按照原有的顺序进入entrylist\
+5.设置entryList的原因是，可以减少cxq上的并发访问，大大增加吞吐量。另外，进入entrylist的线程的位置不会发生变化，新创建的线程也要先进入cxq
 
 **monitor与对象关联**
 
