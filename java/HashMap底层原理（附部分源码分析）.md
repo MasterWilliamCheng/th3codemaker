@@ -14,7 +14,7 @@ HashMap是java中非常常用的容器，以前只是停留在使用阶段，对
 
 #### Hash算法
 
-> 每一个key会经过一次hash运算（先获取key的hashcode，将hashcode无符号右移16位[hashcode >>> 16]，对右移后的值和hashcode进行异或运算（二进制里相同得0，不同得1））[hash = hashcode ^ hashcode >>> 16]，得到key的hash值，至于数组的index值，需要将hash值和数组长度减一后的值进行与运算（同时为1结果为1，否则为0）[(length - 1) & hash]得到。
+> 每一个key会经过一次hash运算（先获取key的hashcode，将hashcode无符号右移16位[hashcode >>> 16]，对右移后的值和hashcode进行异或运算（二进制里相同得0，不同得1））[hash = hashcode ^ hashcode >>> 16]，得到key的hash值，至于数组的index值，需要将hash值和数组长度减一后的值进行与运算（同时为1结果为1，否则为0）[(length - 1) & hash]得到。这里实际上是将取模运算简化成了位运算，h%n = h&(n-1)
 
 ![image](https://user-images.githubusercontent.com/31581862/113298067-fea57600-932d-11eb-9516-38568b38fb89.png)
 
