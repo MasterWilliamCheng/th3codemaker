@@ -114,4 +114,4 @@ extra ：
 
 此外，这些问题可以利于一些市面上成熟的中间件来解决，比如ShardingSphere，mycat，Sharding-JDBC，DRDS等等。 
 
-### 慢日志查询，show processlist排查死锁
+### 慢日志查询，show engine innodb status，show processlist排查死锁
